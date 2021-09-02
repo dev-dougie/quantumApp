@@ -120,7 +120,6 @@ export function GroupDetails() {
             />
 
             <View style={styles.footer}>
-                <Entypo name="flag" size={24} color="black" />
                 <Button title="Registrar incidente" />
             </View>
 
