@@ -1,60 +1,47 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, ImageBackground, Text, FlatList, Share, TouchableOpacity } from 'react-native'
 import { BorderlessButton } from 'react-native-gesture-handler';
 import { Background } from '../../components/Background'
 import { Header } from '../../components/Header';
 import { styles } from './styles';
-import { Fontisto, Entypo  } from '@expo/vector-icons';
+import { Fontisto } from '@expo/vector-icons';
 import { theme } from '../../global/styles/theme';
 import BannerImg from '../../assets/banner.png'
 import { ListHeader } from '../../components/ListHeader';
 import Member from '../../components/Member';
 import ListDivider from '../../components/ListDivider';
-import { ButtonIcon } from '../../components/ButtonIcon';
 import { Button } from '../../components/Button';
+import { Load } from '../../components/Load';
+import { api } from '../../services/api';
+import { useRoute } from '@react-navigation/core';
+import { GroupType } from '../../components/Group';
 
+export type Member = {
+    id: number,
+    username: string,
+    avatar_url: string,
+    status: string
+}
+
+type Params = {
+    groupSelected: GroupType
+}
 
 export function GroupDetails() {
 
-    //Api de membros
-    const members = [
-        {
-            id: '1',
-            username: 'Douglas Santos',
-            avatar_url: 'https://github.com/dev-dougie.png',
-            status: 'online'
-        },
-        {
-            id: '2',
-            username: 'Eduardo Belisia',
-            avatar_url: 'https://github.com/ebelisia.png',
-            status: 'online'
-        },
-        {
-            id: '3',
-            username: 'Fulano de Tal',
-            avatar_url: 'https://igd-wp-uploads-pluginaws.s3.amazonaws.com/wp-content/uploads/2016/05/30105213/Qual-e%CC%81-o-Perfil-do-Empreendedor.jpg',
-            status: 'online'
-        },
-        {
-            id: '4',
-            username: 'Henrique Muniz',
-            avatar_url: 'https://media-exp1.licdn.com/dms/image/C4D03AQEAWLSSKOM9xA/profile-displayphoto-shrink_200_200/0/1593538860024?e=1635984000&v=beta&t=-2peDip2r2scr67A_QHt2POSx5EkZioNqeTziws6fVU',
-            status: 'online'
-        },
-        {
-            id: '5',
-            username: 'Leo Batini',
-            avatar_url: 'https://github.com/batinera.png',
-            status: 'online'
-        },
-        {
-            id: '6',
-            username: 'Susana Nakasato',
-            avatar_url: 'https://github.com/susanakasato.png',
-            status: 'online'
-        },
-    ]
+    const [members, setMembers] = useState<Member[]>([])
+    const [loading, setLoading] = useState(true);
+    
+    const route = useRoute();
+    const { groupSelected } = route.params as Params
+
+    async function loadGroups() {
+        const data = await api.get('/members')
+        setMembers(data.data)
+        setLoading(false)
+    }
+
+    useEffect(() => { loadGroups() }, [])
 
     async function ShareExample() {
         try {
@@ -76,7 +63,6 @@ export function GroupDetails() {
         }
     };
 
-
     return (
         <Background>
             <Header
@@ -88,40 +74,44 @@ export function GroupDetails() {
                             size={24}
                             color={theme.colors.primary} />
                     </BorderlessButton>} />
-            <TouchableOpacity>
-                <ImageBackground
-                    source={BannerImg}
-                    style={styles.banner}>
+            {loading ? <Load /> :
+                <>
+                    <TouchableOpacity>
+                        <ImageBackground
+                            source={BannerImg}
+                            style={styles.banner}>
 
-                    <View style={styles.bannerContent}>
-                        <Text style={styles.title}>
-                            Pro Driverz
-                        </Text>
+                            <View style={styles.bannerContent}>
+                                <Text style={styles.title}>
+                                    {groupSelected.group.name}
+                                </Text>
 
-                        <Text style={styles.subtitle}>
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                        </Text>
+                                <Text style={styles.subtitle}>
+                                    {groupSelected.description}
+                                </Text>
+                            </View>
+
+
+                        </ImageBackground>
+                    </TouchableOpacity>
+                    <ListHeader title="Membros" subtitle={`Total ${members.length}`} />
+
+                    <FlatList
+                        data={members}
+                        keyExtractor={item => item.id.toString()}
+                        renderItem={({ item }) => (
+                            <Member data={item} />
+                        )}
+                        ItemSeparatorComponent={() => <ListDivider />}
+                        style={styles.member}
+                        contentContainerStyle={{ paddingBottom: 69 }}
+                    />
+
+                    <View style={styles.footer}>
+                        <Button title="Registrar incidente" />
                     </View>
+                </>}
 
-
-                </ImageBackground>
-            </TouchableOpacity>
-            <ListHeader title="Membros" subtitle={`Total ${members.length}`} />
-
-            <FlatList
-                data={members}
-                keyExtractor={item => item.id}
-                renderItem={({ item }) => (
-                    <Member data={item} />
-                )}
-                ItemSeparatorComponent={() => <ListDivider />}
-                style={styles.member}
-                contentContainerStyle={{ paddingBottom: 69 }}
-            />
-
-            <View style={styles.footer}>
-                <Button title="Registrar incidente" />
-            </View>
 
         </Background>
     )

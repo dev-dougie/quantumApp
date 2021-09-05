@@ -6,31 +6,39 @@ import {
     KeyboardAvoidingView,
     Platform
 } from 'react-native'
-import { RectButton } from 'react-native-gesture-handler'
+import uuid from 'react-native-uuid'
 import { Background } from '../../components/Background'
 import { CategorySelect } from '../../components/CategorySelect'
-import { Feather } from '@expo/vector-icons'
 
 import { Header } from '../../components/Header';
-import { GroupIcon } from '../../components/GroupIcon'
 
-import { theme } from '../../global/styles/theme'
+
 import { styles } from './styles'
-import { SmallInput } from '../../components/SmallInput'
 import { TextArea } from '../../components/TextArea'
 import { Button } from '../../components/Button'
-import { GroupType } from '../../components/Group'
 import { NormalInput } from '../../components/NormalInput'
-
 
 
 export function GroupCreate() {
 
     const [category, setCategory] = useState('')
-    const [guild, setGuild] = useState<GroupType>({} as GroupType)
+    const [groupName, setGroupName] = useState('')
+    const [patrimonyValue, setPatrimonyValue] = useState('')
+    const [description, setDescription] = useState('')
+
 
     function handleCategorySelect(categoryId: string) {
         setCategory(categoryId)
+    }
+
+    async function handleSave() {
+        const newGroup = {
+            id: uuid.v4(),
+            category,
+            groupName,
+            patrimonyValue,
+            description
+        }
     }
 
 
@@ -56,18 +64,18 @@ export function GroupCreate() {
                         <View style={styles.field}>
                             <View style={{ width: '100%' }}>
                                 <Text style={styles.label}>Nome do Grupo</Text>
-                                <NormalInput />
+                                <NormalInput onChangeText={setGroupName} />
                             </View>
                         </View>
 
                         <View style={styles.field}>
                             <View style={{ width: '100%' }}>
                                 <Text style={styles.label}>Valor do patrimônio (R$)</Text>
-                                <NormalInput />
+                                <NormalInput onChangeText={setPatrimonyValue} />
                             </View>
                         </View>
 
-        
+
                         <View style={[styles.field, { marginBottom: 6 }]}>
                             <Text style={styles.label}>Descrição</Text>
 
@@ -77,7 +85,8 @@ export function GroupCreate() {
                         <TextArea multiline
                             maxLength={100}
                             numberOfLines={5}
-                            autoCorrect={false} />
+                            autoCorrect={false}
+                            onChangeText={setDescription} />
 
                         <View style={styles.footer}>
                             <Button title="Criar grupo" />

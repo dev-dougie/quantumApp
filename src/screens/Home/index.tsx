@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Text, View, FlatList } from 'react-native'
+import React, { useState, useEffect, useCallback } from 'react'
+import { View, FlatList, Alert } from 'react-native'
 import { CategorySelect } from '../../components/CategorySelect';
 import { ButtonAdd } from '../../components/ButtonAdd';
 import { Profile } from '../../components/Profile'
@@ -8,52 +8,22 @@ import { ListHeader } from '../../components/ListHeader';
 
 import { Background } from '../../components/Background';
 import { useNavigation } from '@react-navigation/native';
-import { Group } from '../../components/Group';
-import ListDivider from '../../components/ListDivider';
+import { useFocusEffect } from '@react-navigation/core';
 
+import { Group, GroupType } from '../../components/Group';
+import ListDivider from '../../components/ListDivider';
+import { Load } from '../../components/Load';
+import { api } from '../../services/api';
+import { RectButton } from 'react-native-gesture-handler';
 
 export function Home() {
 
-    const [category, setCategory] = useState('')
+    const [category, setCategory] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [groups, setGroups] = useState<GroupType[]>([]);
+
+
     const navigation = useNavigation();
-
-    //aqui nós iremos buscar da API de grupos!
-    const groups = [
-        {
-            id: '1',
-            group: {
-                id: '1',
-                name: 'Pro Driverz',
-                icon: 'https://i.pinimg.com/originals/3e/bf/df/3ebfdfc513102f134b1f20d4e51032d3.jpg',
-                owner: true
-            },
-            category: '1',
-            description: ' Lorem, ipsum dolor sit amet consectetur adipisicing elit.'
-        },
-        {
-            id: '2',
-            group: {
-                id: '2',
-                name: 'Recanto dos Pássaros',
-                icon: 'https://fotos.vivadecora.com.br/decoracao-chacara-jardim-com-arbustos-floridos-rosas-e-decoracao-revistavd-196260-proportional-height_cover_medium.jpg',
-                owner: false
-            },
-            category: '2',
-            description: ' Lorem, ipsum dolor sit amet consectetur adipisicing elit.'
-        },
-        {
-            id: '3',
-            group: {
-                id: '3',
-                name: 'Magic Of Sea',
-                icon: 'https://files.nsctotal.com.br/s3fs-public/graphql-upload-files/mercado-barcos-de-luxo-sc-schaeffer_2.jpg?9QAQ__B7Ia31gHHSHphknBxmDqFsS95o',
-                owner: false
-            },
-            category: '3',
-            description: ' Lorem, ipsum dolor sit amet consectetur adipisicing elit.'
-        },
-    ]
-
     function handleCategorySelect(categoryId: string) {
         categoryId === category ? setCategory('') : setCategory(categoryId)
     }
@@ -62,41 +32,66 @@ export function Home() {
         navigation.navigate('GroupCreate')
     }
 
-    function handleGroupDetails() {
-        navigation.navigate('GroupDetails')
+    function handleGroupDetails(groupSelected: GroupType) {
+        navigation.navigate('GroupDetails', { groupSelected })
     }
 
+    async function loadGroups() {
+        const data = await api.get('/groups')
+        setGroups(data.data)
+        setLoading(false)
+
+        //Realizando a filtragem dos grupos com base no clique do usuário
+        category ? setGroups(groups.filter(item => item.category.toString() == category)) : setGroups(data.data)
+    }
+
+    useFocusEffect(useCallback(() => { loadGroups() }, [category]))
+
+    function handleSignOut(){
+        Alert.alert('Logout', 'Deseja sair do Quantum?', [
+            {
+                text: 'Não'
+            },
+            {
+                text: 'Sim',
+                onPress: () => { navigation.goBack()}
+            }
+        ])
+    }
 
     return (
         <Background>
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Profile />
+                    <RectButton onPress={handleSignOut}>
+                        <Profile />
+                    </RectButton>
                     <ButtonAdd onPress={handleGroupCreate} />
                 </View>
 
-                <View>
-                    <CategorySelect
-                        categorySelected={category}
-                        setCategory={handleCategorySelect} />
-                </View>
 
+                <CategorySelect
+                    categorySelected={category}
+                    setCategory={handleCategorySelect} />
+                {
+                    loading ? <Load /> :
+                        <>
+                            <ListHeader title='Grupos' subtitle={`Total ${groups.length}`} />
 
-                <ListHeader title='Grupos' subtitle={`Total ${groups.length}`} />
-
-                <FlatList
-                    data={groups}
-                    keyExtractor={item => item.id}
-                    renderItem={({ item }) => (
-                        <Group data={item}
-                            onPress={handleGroupDetails} />
-                    )}
-                    style={styles.matches}
-                    contentContainerStyle={{ paddingBottom: 69 }}
-                    showsVerticalScrollIndicator={false}
-
-                    ItemSeparatorComponent={() => <ListDivider />}
-                />
+                            <FlatList
+                                data={groups}
+                                keyExtractor={item => item.id.toString()}
+                                renderItem={({ item }) => (
+                                    <Group data={item}
+                                        onPress={() => handleGroupDetails(item)} />
+                                )}
+                                style={styles.matches}
+                                contentContainerStyle={{ paddingBottom: 69 }}
+                                showsVerticalScrollIndicator={false}
+                                ItemSeparatorComponent={() => <ListDivider />}
+                            />
+                        </>
+                }
             </View>
         </Background>
     );

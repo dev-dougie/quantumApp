@@ -5,21 +5,20 @@ import { styles } from './styles'
 import UserSvg from '../../assets/user.svg'
 import { theme } from '../../global/styles/theme'
 import { RectButton } from 'react-native-gesture-handler'
-import { LinearGradient } from 'react-native-svg'
 import { categories } from '../../utils/categories'
 
 export type GroupType = {
-    id: string
+    id: number,
     name: string,
     icon: string,
     owner: boolean
+    category: number,
+    description: string
 }
 
 export type GroupList = {
-    id: string,
+    id: number,
     group: GroupType,
-    category: string,
-    description: string
 }
 
 type Props = {
