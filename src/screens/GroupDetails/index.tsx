@@ -46,7 +46,7 @@ export function GroupDetails() {
     async function ShareExample() {
         try {
             const result = await Share.share({
-                message: `Junte-se ao grupo no Quantum! 😁
+                message: `Junte-se ao ${groupSelected.group.name} no Quantum! 😁
                                 Link para acessar: quantum.app.join`,
             });
             if (result.action === Share.sharedAction) {

@@ -4,7 +4,8 @@ import {
     Text,
     ScrollView,
     KeyboardAvoidingView,
-    Platform
+    Platform,
+    Alert
 } from 'react-native'
 import uuid from 'react-native-uuid'
 import { Background } from '../../components/Background'
@@ -17,6 +18,8 @@ import { styles } from './styles'
 import { TextArea } from '../../components/TextArea'
 import { Button } from '../../components/Button'
 import { NormalInput } from '../../components/NormalInput'
+import axios from 'axios'
+import { api } from '../../services/api'
 
 
 export function GroupCreate() {
@@ -25,21 +28,24 @@ export function GroupCreate() {
     const [groupName, setGroupName] = useState('')
     const [patrimonyValue, setPatrimonyValue] = useState('')
     const [description, setDescription] = useState('')
+    const [icon, setIcon] = useState('')
+    const groupObject = {
+        group: {
+            name: groupName,
+            icon,
+            owner: true
+        },
+        category,
+        description
+    }
 
 
-    function handleCategorySelect(categoryId: string) {
+
+    function handleCategorySelect(categoryId: number) {
         setCategory(categoryId)
     }
 
-    async function handleSave() {
-        const newGroup = {
-            id: uuid.v4(),
-            category,
-            groupName,
-            patrimonyValue,
-            description
-        }
-    }
+    const addGroup = async() => await axios.post(`https://quantumfiap.herokuapp.com/groups`, groupObject).then(() => Alert.alert('Grupo cadastrado com sucesso!')).catch(err => console.log('Erro:', err))
 
 
     return (
@@ -75,6 +81,13 @@ export function GroupCreate() {
                             </View>
                         </View>
 
+                        <View style={styles.field}>
+                            <View style={{ width: '100%' }}>
+                                <Text style={styles.label}>Ícone (Ex.: http://icon.png)</Text>
+                                <NormalInput onChangeText={setIcon} autoCorrect={false} />
+                            </View>
+                        </View>
+
 
                         <View style={[styles.field, { marginBottom: 6 }]}>
                             <Text style={styles.label}>Descrição</Text>
@@ -89,7 +102,7 @@ export function GroupCreate() {
                             onChangeText={setDescription} />
 
                         <View style={styles.footer}>
-                            <Button title="Criar grupo" />
+                            <Button onPress={addGroup} title="Criar grupo" />
                         </View>
                     </View>
                 </ScrollView>

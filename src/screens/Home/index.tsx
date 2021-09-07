@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { View, FlatList, Alert } from 'react-native'
+import { View, FlatList, Alert, Text } from 'react-native'
 import { CategorySelect } from '../../components/CategorySelect';
 import { ButtonAdd } from '../../components/ButtonAdd';
 import { Profile } from '../../components/Profile'
@@ -47,14 +47,14 @@ export function Home() {
 
     useFocusEffect(useCallback(() => { loadGroups() }, [category]))
 
-    function handleSignOut(){
+    function handleSignOut() {
         Alert.alert('Logout', 'Deseja sair do Quantum?', [
             {
                 text: 'Não'
             },
             {
                 text: 'Sim',
-                onPress: () => { navigation.goBack()}
+                onPress: () => { navigation.goBack() }
             }
         ])
     }
@@ -74,7 +74,7 @@ export function Home() {
                     categorySelected={category}
                     setCategory={handleCategorySelect} />
                 {
-                    loading ? <Load /> :
+                    loading ? <Load /> : groups.length > 0 ?
                         <>
                             <ListHeader title='Grupos' subtitle={`Total ${groups.length}`} />
 
@@ -90,7 +90,7 @@ export function Home() {
                                 showsVerticalScrollIndicator={false}
                                 ItemSeparatorComponent={() => <ListDivider />}
                             />
-                        </>
+                        </> : <><Text style={{color: '#fff', fontSize: 16, alignSelf: 'center', marginTop: 80}}>Você ainda não possui grupos!</Text></>
                 }
             </View>
         </Background>
