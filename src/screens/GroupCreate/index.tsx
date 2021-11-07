@@ -13,14 +13,11 @@ import { CategorySelect } from '../../components/CategorySelect'
 
 import { Header } from '../../components/Header';
 
-
 import { styles } from './styles'
 import { TextArea } from '../../components/TextArea'
 import { Button } from '../../components/Button'
 import { NormalInput } from '../../components/NormalInput'
-import axios from 'axios'
-import { api } from '../../services/api'
-
+import axios from 'axios';
 
 export function GroupCreate() {
 
@@ -29,6 +26,7 @@ export function GroupCreate() {
     const [patrimonyValue, setPatrimonyValue] = useState('')
     const [description, setDescription] = useState('')
     const [icon, setIcon] = useState('')
+
     const groupObject = {
         group: {
             name: groupName,
@@ -38,8 +36,6 @@ export function GroupCreate() {
         category,
         description
     }
-
-
 
     function handleCategorySelect(categoryId: number) {
         setCategory(categoryId)
