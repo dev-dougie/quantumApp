@@ -92,5 +92,6 @@ export const styles = StyleSheet.create({
     },
     footerForm: {
         marginTop: 20
-    }
+    },
+ 
 })

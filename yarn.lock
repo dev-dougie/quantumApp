@@ -5320,6 +5320,11 @@ mockdate@^3.0.2:
   resolved "https://registry.yarnpkg.com/mockdate/-/mockdate-3.0.5.tgz#789be686deb3149e7df2b663d2bc4392bc3284fb"
   integrity sha512-iniQP4rj1FhBdBYS/+eQv7j1tadJ9lJtdzgOpvsOHng/GbcDh2Fhdeq+ZRldrPYdXvCyfFUmFeEwEGXZB5I/AQ==
 
+moment@2.29.1:
+  version "2.29.1"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.1.tgz#b2be769fa31940be9eeea6469c075e35006fa3d3"
+  integrity sha512-kHmoybcPV8Sqy59DwNDY3Jefr64lK/by/da0ViFcuA4DH0vQg5Q6Ze5VimxkfQNSC+Mls/Kx53s7TjP1RhFEDQ==
+
 morgan@^1.10.0:
   version "1.10.0"
   resolved "https://registry.yarnpkg.com/morgan/-/morgan-1.10.0.tgz#091778abc1fc47cd3509824653dae1faab6b17d7"
@@ -6009,6 +6014,15 @@ react-is@^17.0.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
+react-native-calendario@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-calendario/-/react-native-calendario-3.0.1.tgz#dabaeb23dbc818fef6fd9d61c6f4b5786123fb74"
+  integrity sha512-kVDmlrMS5/EkDUOeKGC51/59ctbqq7JmSv9gyRlMFe2aJrDdUUDwEuaEw0OFPIaTyDcyRl3u+Mnvz8xiTxec4g==
+  dependencies:
+    moment "2.29.1"
+    react-dom "16.13.1"
+    react-native-month "1.0.5"
+
 react-native-gesture-handler@~1.10.2:
   version "1.10.3"
   resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-1.10.3.tgz#942bbf2963bbf49fa79593600ee9d7b5dab3cfc0"
@@ -6024,6 +6038,11 @@ react-native-iphone-x-helper@^1.3.1:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.3.1.tgz#20c603e9a0e765fd6f97396638bdeb0e5a60b010"
   integrity sha512-HOf0jzRnq2/aFUcdCJ9w9JGzN3gdEg0zFE4FyYlp4jtidqU03D5X7ZegGKfT1EWteR0gPBGp9ye5T5FvSWi9Yg==
+
+react-native-month@1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/react-native-month/-/react-native-month-1.0.5.tgz#d39ad8d08485f03c21fb12bac818093120f3ee38"
+  integrity sha512-uWpCaxARPY0hSqz+Aty0Xk04wnCUEy4JhgieaL03wi7aTse4Bvt4+B7jWxREGC/ibDip40ZLeBqwXcVHGWgYbA==
 
 react-native-reanimated@~2.2.0:
   version "2.2.0"

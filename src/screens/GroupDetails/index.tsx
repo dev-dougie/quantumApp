@@ -29,8 +29,8 @@ import { ModalView } from '../../components/ModalView';
 import { NormalInput } from '../../components/NormalInput';
 import { TextArea } from '../../components/TextArea';
 import { SmallInput } from '../../components/SmallInput';
-import axios from 'axios';
 import IncidentItem from '../../components/IncidentItem';
+import { Calendar } from 'react-native-calendario';
 
 export type Member = {
     id: number,
@@ -58,6 +58,7 @@ export function GroupDetails() {
     const [loading, setLoading] = useState(true);
     const [openIncidentModal, setOpenIncidentesModal] = useState(false);
     const [openListIncidentModal, setOpenListIncidentesModal] = useState(false);
+    const [openScheduleModel, setOpenScheduleModal] = useState(false);
     const [incidentDescription, setDescription] = useState('');
     const [incidentValue, setIncidentValue] = useState('');
     const [incidentDay, setIncidentDay] = useState('');
@@ -81,7 +82,7 @@ export function GroupDetails() {
         setLoading(false)
     }
 
-    async function getIncidents(){
+    async function getIncidents() {
         const data = await api.get("/incidents");
         const response = data.data;
         const filteredIncidents = response.filter((item, index) => item.groupId === groupSelected.id)
@@ -127,15 +128,23 @@ export function GroupDetails() {
         setOpenListIncidentesModal(false);
     }
 
-    function handleOpenIncidentsList(){
+    function handleOpenIncidentsList() {
         setOpenListIncidentesModal(true)
+    }
+
+    function handleOpenSchedule() {
+        setOpenScheduleModal(true);
+    }
+
+    function handleCloseSchedule() {
+        setOpenScheduleModal(false);
     }
 
     const addIncident = async () => {
         await api.post("/incidents", incidentObject).then(() => {
             Alert.alert('Incidente cadastrado com sucesso!');
             setOpenIncidentesModal(false);
-            setTimeout(() => { setOpenListIncidentesModal(true)}, 2000)
+            setTimeout(() => { setOpenListIncidentesModal(true) }, 2000)
         }).catch(err => console.log(err))
     }
 
@@ -167,7 +176,7 @@ export function GroupDetails() {
                                         {groupSelected.description}
                                     </Text>
 
-                                    <Text style={{marginTop: 20, color: '#fff', fontWeight: '800'}}>
+                                    <Text style={{ marginTop: 20, color: '#fff', fontWeight: '800' }}>
                                         CLIQUE PARA CONSULTAR INCIDENTES
                                     </Text>
                                 </View>
@@ -189,26 +198,25 @@ export function GroupDetails() {
                         />
 
                         <View style={styles.footer}>
+                            <Button title="Consultar agenda" onPress={handleOpenSchedule} />
                             <Button title="Registrar incidente" onPress={handleOpenIncidentsForm} />
                         </View>
-
                     </>}
 
-                  
-
             </Background>
+            {/* LISTAGEM DOS INCIDENTES REGISTRADOS */}
             <ModalView closeModal={handleCloseIncidentsList} visible={openListIncidentModal}>
-             {incidentsOfTheGroup.length ? <FlatList
-                            data={incidentsOfTheGroup}
-                            keyExtractor={item => item.id.toString()}
-                            renderItem={({ item }) => (
-                                <IncidentItem data={item} />
-                            )}
-                            ItemSeparatorComponent={() => <ListDivider />}
-                            style={styles.member}
-                            contentContainerStyle={{ paddingBottom: 69 }}
-                        /> : <Text style={{color: "#fff", fontSize: 15, textAlign: 'center', marginTop: 200}}>Nenhum incidente cadastrado neste grupo. 😎</Text>
-            }
+                {incidentsOfTheGroup.length ? <FlatList
+                    data={incidentsOfTheGroup}
+                    keyExtractor={item => item.id.toString()}
+                    renderItem={({ item }) => (
+                        <IncidentItem data={item} />
+                    )}
+                    ItemSeparatorComponent={() => <ListDivider />}
+                    style={styles.member}
+                    contentContainerStyle={{ paddingBottom: 69 }}
+                /> : <Text style={{ color: "#fff", fontSize: 15, textAlign: 'center', marginTop: 200 }}>Nenhum incidente cadastrado neste grupo. 😎</Text>
+                }
             </ModalView>
             {/* MODAL REGISTRO DE INCIDENTES */}
             <ModalView closeModal={handleCloseIncidentsForm} visible={openIncidentModal}>
@@ -264,6 +272,59 @@ export function GroupDetails() {
                     </Background>
                 </KeyboardAvoidingView>
 
+            </ModalView>
+            {/* AGENDA*/}
+            <ModalView closeModal={handleCloseSchedule} visible={openScheduleModel}>
+                <Calendar
+                    onChange={(range) => console.log(range)}
+                    minDate={new Date(2018, 3, 20)}
+                    startDate={new Date(2018, 3, 30)}
+                    endDate={new Date(2018, 4, 5)}
+                    theme={{
+                        // activeDayColor: {},
+                        monthTitleTextStyle: {
+                            color: '#E51C44',
+                            fontWeight: '300',
+                            fontSize: 16,
+                        },
+                        emptyMonthContainerStyle: {},
+                        emptyMonthTextStyle: {
+                            fontWeight: '200',
+                        },
+                        weekColumnsContainerStyle: {},
+                        weekColumnStyle: {
+                            paddingVertical: 10,
+                        },
+                        weekColumnTextStyle: {
+                            color: '#b6c1cd',
+                            fontSize: 13,
+                        },
+                        nonTouchableDayContainerStyle: {},
+                        nonTouchableDayTextStyle: {},
+                        startDateContainerStyle: {},
+                        endDateContainerStyle: {},
+                        dayContainerStyle: {},
+                        dayTextStyle: {
+                            color: '#2d4150',
+                            fontWeight: '200',
+                            fontSize: 15,
+                        },
+                        dayOutOfRangeContainerStyle: {},
+                        dayOutOfRangeTextStyle: {},
+                        todayContainerStyle: {},
+                        todayTextStyle: {
+                            color: theme.colors.primary,
+                            fontWeight: '400'
+                        },
+                        activeDayContainerStyle: {
+                            backgroundColor: '#6d95da',
+                        },
+                        activeDayTextStyle: {
+                            color: 'black',
+                        },
+                        nonTouchableLastMonthDayTextStyle: {},
+                    }}
+                />
             </ModalView>
         </>
 
